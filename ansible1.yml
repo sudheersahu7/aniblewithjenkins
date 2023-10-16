@@ -1,0 +1,20 @@
+---
+- name: Install and Start Apache HTTP Server
+  hosts: localhost
+  become: yes  # You may need to become a superuser (root) to install packages
+  tasks:
+    - name: Check if Apache HTTP server is installed
+      command: rpm -q httpd  # This command may vary depending on your Linux distribution
+      register: httpd_status
+      ignore_errors: yes
+
+    - name: Install Apache HTTP server
+      yum:
+        name: httpd
+        state: present
+      when: httpd_status.rc != 0  # Install only if httpd is not installed
+
+    - name: Ensure Apache HTTP server is started
+      service:
+        name: httpd
+        state: started
